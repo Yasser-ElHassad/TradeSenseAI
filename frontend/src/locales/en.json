@@ -1,0 +1,331 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "refresh": "Refresh",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "leaderboard": "Leaderboard",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Get Started",
+    "welcome": "Welcome"
+  },
+  "landing": {
+    "trustedBy": "Trusted by 10,000+ Traders Worldwide",
+    "heroSubtitle": "Your intelligent trading companion. Master the markets with AI-powered insights, real-time signals, and a supportive community.",
+    "startChallenge": "Start Trading Challenge",
+    "viewLeaderboard": "View Leaderboard",
+    "aiPowered": "AI-Powered",
+    "aiAssistantTitle": "AI-Powered Trading Assistant",
+    "aiAssistantSubtitle": "Let artificial intelligence guide your trading decisions with precision and confidence",
+    "stats": {
+      "virtualFunds": "Virtual Funds Traded",
+      "activeTraders": "Active Traders",
+      "satisfaction": "Satisfaction Rate"
+    },
+    "hero": {
+      "badge": "AI-Powered Trading Challenge",
+      "title": "Master Trading with",
+      "titleHighlight": "AI-Powered Challenges",
+      "description": "Join TradeSense AI and prove your trading skills. Trade virtual capital, follow our rules, and get certified as a skilled trader.",
+      "cta": "Start Trading Challenge",
+      "secondaryCta": "View Pricing",
+      "stats": {
+        "traders": "Active Traders",
+        "passRate": "Pass Rate",
+        "payout": "Total Payouts"
+      }
+    },
+    "features": {
+      "title": "Why Choose TradeSense AI?",
+      "ai": {
+        "title": "AI-Powered Analysis",
+        "description": "Get real-time AI signals and market analysis to improve your trading decisions."
+      },
+      "markets": {
+        "title": "Global Markets",
+        "description": "Trade stocks from NYSE, NASDAQ, and the Moroccan Casablanca Stock Exchange."
+      },
+      "rules": {
+        "title": "Clear Rules",
+        "description": "Simple and transparent trading rules with real-time monitoring of your progress."
+      },
+      "support": {
+        "title": "24/7 Support",
+        "description": "Get help anytime with our dedicated support team and comprehensive documentation."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Choose Your Plan",
+        "description": "Select a challenge plan that fits your experience level and trading goals."
+      },
+      "step2": {
+        "title": "Start Trading",
+        "description": "Trade virtual capital while following our risk management rules."
+      },
+      "step3": {
+        "title": "Get Certified",
+        "description": "Pass the challenge and earn your certificate as a verified trader."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Pricing Plans",
+    "subtitle": "Choose Your Challenge",
+    "description": "Select the plan that matches your trading experience and goals. All plans include the same rules - only the capital differs.",
+    "badge": "Trading Challenges",
+    "popular": "Most Popular",
+    "selectPlan": "Select Plan",
+    "virtualCapital": "Virtual Capital",
+    "features": {
+      "profitTarget": "Profit Target",
+      "dailyLoss": "Daily Loss Limit",
+      "maxLoss": "Max Loss Limit",
+      "aiSignals": "AI Trading Signals",
+      "support": "Priority Support",
+      "certificate": "Completion Certificate"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What happens if I pass?",
+        "answer": "Upon passing the challenge, you'll receive a certificate and be featured on our leaderboard. This simulates earning a funded account."
+      },
+      "q2": {
+        "question": "Can I retry if I fail?",
+        "answer": "Yes! You can purchase a new challenge anytime. Use your experience to improve and try again."
+      },
+      "q3": {
+        "question": "What markets can I trade?",
+        "answer": "Trade stocks from international markets (NYSE, NASDAQ) and the Moroccan Casablanca Stock Exchange."
+      },
+      "q4": {
+        "question": "Is there a time limit?",
+        "answer": "No time limit! Take as long as you need to reach the profit target while respecting the loss limits."
+      }
+    },
+    "guarantee": {
+      "title": "100% Money Back Guarantee",
+      "description": "Not satisfied? Get a full refund within 24 hours if you haven't made any trades."
+    },
+    "trustBadges": "Trusted Payment Methods"
+  },
+  "auth": {
+    "signInTitle": "Sign in to your account",
+    "or": "Or",
+    "createAccount": "create a new account",
+    "email": "Email address",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "registerTitle": "Create your account",
+    "alreadyHaveAccount": "Already have an account?",
+    "username": "Username",
+    "confirmPassword": "Confirm Password",
+    "createAccountBtn": "Create Account",
+    "creatingAccount": "Creating account...",
+    "termsAgreement": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your trading account",
+      "email": "Email Address",
+      "password": "Password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "register": "Create one here"
+    },
+    "register": {
+      "title": "Start Your Journey",
+      "subtitle": "Create your trading account",
+      "username": "Username",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in here"
+    }
+  },
+  "dashboard": {
+    "title": "Trading Dashboard",
+    "loading": "Loading dashboard...",
+    "balance": "Balance",
+    "dailyPnL": "Daily P/L",
+    "totalPnL": "Total P/L",
+    "challenge": "Challenge",
+    "status": {
+      "active": "ACTIVE",
+      "passed": "PASSED",
+      "failed": "FAILED",
+      "noChallenge": "NO CHALLENGE"
+    },
+    "noChallenge": {
+      "title": "No Active Challenge",
+      "description": "Purchase a challenge to start trading",
+      "cta": "View Pricing"
+    },
+    "trade": {
+      "title": "Trade Execution",
+      "subtitle": "Execute market orders",
+      "symbol": "Symbol",
+      "quantity": "Quantity",
+      "price": "Price",
+      "orderType": "Order Type",
+      "market": "Market",
+      "limit": "Limit",
+      "buy": "Buy",
+      "sell": "Sell",
+      "currentPrice": "Current Price",
+      "totalValue": "Total Value",
+      "availableBalance": "Available Balance",
+      "insufficientBalance": "Insufficient balance for this trade"
+    },
+    "positions": {
+      "title": "Open Positions",
+      "noPositions": "No open positions",
+      "symbol": "Symbol",
+      "quantity": "Qty",
+      "avgPrice": "Avg Price",
+      "currentPrice": "Current",
+      "pnl": "P/L",
+      "actions": "Actions"
+    },
+    "trades": {
+      "title": "Recent Trades",
+      "noTrades": "No trades yet",
+      "symbol": "Symbol",
+      "type": "Type",
+      "quantity": "Quantity",
+      "price": "Price",
+      "date": "Date"
+    },
+    "aiSignals": {
+      "title": "AI Signals",
+      "buy": "BUY",
+      "sell": "SELL",
+      "hold": "HOLD",
+      "confidence": "Confidence"
+    },
+    "assets": {
+      "title": "Tradeable Assets",
+      "search": "Search assets...",
+      "all": "All",
+      "crypto": "Crypto",
+      "stocks": "Stocks"
+    },
+    "chart": {
+      "title": "Price Chart",
+      "loading": "Loading chart..."
+    },
+    "refreshAll": "Refresh all data"
+  },
+  "leaderboard": {
+    "title": "Monthly Leaderboard",
+    "topPerformers": "Top Performers",
+    "description": "Top performing traders this month",
+    "rank": "Rank",
+    "trader": "Trader",
+    "plan": "Plan",
+    "return": "Return",
+    "trades": "Trades",
+    "winRate": "Win Rate",
+    "status": "Status",
+    "noTraders": "No traders on the leaderboard yet",
+    "autoRefresh": "Auto-refreshes every 60 seconds"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "description": "Manage users, challenges, and platform statistics",
+    "stats": {
+      "totalUsers": "Total Users",
+      "activeChallenges": "Active Challenges",
+      "passRate": "Pass Rate",
+      "totalRevenue": "Total Revenue"
+    },
+    "challenges": {
+      "title": "Challenges",
+      "overview": "Challenge Overview",
+      "total": "Total",
+      "active": "Active",
+      "passed": "Passed",
+      "failed": "Failed"
+    },
+    "table": {
+      "id": "ID",
+      "user": "User",
+      "plan": "Plan",
+      "status": "Status",
+      "balance": "Balance",
+      "pnl": "P/L",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "pass": "Pass",
+      "fail": "Fail",
+      "reactivate": "Reactivate"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search by username or email...",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "plan": "Plan",
+      "allPlans": "All Plans"
+    }
+  },
+  "payment": {
+    "title": "Complete Payment",
+    "methods": {
+      "card": "Card",
+      "crypto": "Crypto",
+      "paypal": "PayPal"
+    },
+    "card": {
+      "number": "Card Number",
+      "expiry": "Expiry",
+      "cvv": "CVV",
+      "secure": "Secured by CMI Morocco"
+    },
+    "crypto": {
+      "sendTo": "Send payment to:",
+      "walletAddress": "Your Wallet Address (for refunds)",
+      "note": "Payment verified within 10 minutes"
+    },
+    "paypal": {
+      "email": "PayPal Email",
+      "protection": "PayPal Buyer Protection"
+    },
+    "processing": "Processing Payment...",
+    "pay": "Pay"
+  },
+  "language": {
+    "select": "Language",
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  }
+}

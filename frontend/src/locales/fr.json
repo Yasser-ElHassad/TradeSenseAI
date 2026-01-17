@@ -1,0 +1,331 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "refresh": "Actualiser",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "nav": {
+    "home": "Accueil",
+    "pricing": "Tarifs",
+    "leaderboard": "Classement",
+    "dashboard": "Tableau de bord",
+    "admin": "Admin",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "Commencer",
+    "welcome": "Bienvenue"
+  },
+  "landing": {
+    "trustedBy": "Plus de 10 000 traders nous font confiance dans le monde",
+    "heroSubtitle": "Votre compagnon de trading intelligent. Maîtrisez les marchés avec des analyses propulsées par l'IA, des signaux en temps réel et une communauté solidaire.",
+    "startChallenge": "Commencer le Défi de Trading",
+    "viewLeaderboard": "Voir le Classement",
+    "aiPowered": "Propulsé par l'IA",
+    "aiAssistantTitle": "Assistant de Trading IA",
+    "aiAssistantSubtitle": "Laissez l'intelligence artificielle guider vos décisions de trading avec précision et confiance",
+    "stats": {
+      "virtualFunds": "Fonds Virtuels Tradés",
+      "activeTraders": "Traders Actifs",
+      "satisfaction": "Taux de Satisfaction"
+    },
+    "hero": {
+      "badge": "Défi de Trading Propulsé par l'IA",
+      "title": "Maîtrisez le Trading avec des",
+      "titleHighlight": "Défis Propulsés par l'IA",
+      "description": "Rejoignez TradeSense AI et prouvez vos compétences en trading. Tradez du capital virtuel, suivez nos règles et obtenez la certification de trader qualifié.",
+      "cta": "Commencer le Défi",
+      "secondaryCta": "Voir les Tarifs",
+      "stats": {
+        "traders": "Traders Actifs",
+        "passRate": "Taux de Réussite",
+        "payout": "Paiements Totaux"
+      }
+    },
+    "features": {
+      "title": "Pourquoi Choisir TradeSense AI?",
+      "ai": {
+        "title": "Analyse par IA",
+        "description": "Obtenez des signaux IA en temps réel et des analyses de marché pour améliorer vos décisions."
+      },
+      "markets": {
+        "title": "Marchés Mondiaux",
+        "description": "Tradez des actions du NYSE, NASDAQ et de la Bourse de Casablanca."
+      },
+      "rules": {
+        "title": "Règles Claires",
+        "description": "Des règles de trading simples et transparentes avec un suivi en temps réel de vos progrès."
+      },
+      "support": {
+        "title": "Support 24/7",
+        "description": "Obtenez de l'aide à tout moment avec notre équipe de support dédiée."
+      }
+    },
+    "howItWorks": {
+      "title": "Comment Ça Marche",
+      "step1": {
+        "title": "Choisissez Votre Plan",
+        "description": "Sélectionnez un plan de défi adapté à votre niveau d'expérience."
+      },
+      "step2": {
+        "title": "Commencez à Trader",
+        "description": "Tradez du capital virtuel en suivant nos règles de gestion des risques."
+      },
+      "step3": {
+        "title": "Obtenez la Certification",
+        "description": "Réussissez le défi et obtenez votre certificat de trader vérifié."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Plans Tarifaires",
+    "subtitle": "Choisissez Votre Défi",
+    "description": "Sélectionnez le plan qui correspond à votre expérience et vos objectifs de trading. Tous les plans incluent les mêmes règles - seul le capital diffère.",
+    "badge": "Défis de Trading",
+    "popular": "Le Plus Populaire",
+    "selectPlan": "Sélectionner",
+    "virtualCapital": "Capital Virtuel",
+    "features": {
+      "profitTarget": "Objectif de Profit",
+      "dailyLoss": "Perte Journalière Max",
+      "maxLoss": "Perte Maximale",
+      "aiSignals": "Signaux IA de Trading",
+      "support": "Support Prioritaire",
+      "certificate": "Certificat de Réussite"
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "q1": {
+        "question": "Que se passe-t-il si je réussis?",
+        "answer": "En réussissant le défi, vous recevrez un certificat et serez présenté sur notre classement."
+      },
+      "q2": {
+        "question": "Puis-je réessayer si j'échoue?",
+        "answer": "Oui! Vous pouvez acheter un nouveau défi à tout moment. Utilisez votre expérience pour vous améliorer."
+      },
+      "q3": {
+        "question": "Quels marchés puis-je trader?",
+        "answer": "Tradez des actions des marchés internationaux (NYSE, NASDAQ) et de la Bourse de Casablanca."
+      },
+      "q4": {
+        "question": "Y a-t-il une limite de temps?",
+        "answer": "Pas de limite de temps! Prenez le temps nécessaire pour atteindre l'objectif de profit."
+      }
+    },
+    "guarantee": {
+      "title": "Garantie Satisfait ou Remboursé",
+      "description": "Pas satisfait? Obtenez un remboursement complet dans les 24 heures si vous n'avez pas effectué de trades."
+    },
+    "trustBadges": "Méthodes de Paiement Sécurisées"
+  },
+  "auth": {
+    "signInTitle": "Connectez-vous à votre compte",
+    "or": "Ou",
+    "createAccount": "créer un nouveau compte",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion en cours...",
+    "registerTitle": "Créez votre compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte?",
+    "username": "Nom d'utilisateur",
+    "confirmPassword": "Confirmer le mot de passe",
+    "createAccountBtn": "Créer un Compte",
+    "creatingAccount": "Création du compte...",
+    "termsAgreement": "En créant un compte, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+    "login": {
+      "title": "Bon Retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "Adresse Email",
+      "password": "Mot de Passe",
+      "submit": "Se Connecter",
+      "noAccount": "Vous n'avez pas de compte?",
+      "register": "Créez-en un ici"
+    },
+    "register": {
+      "title": "Commencez Votre Aventure",
+      "subtitle": "Créez votre compte de trading",
+      "username": "Nom d'utilisateur",
+      "email": "Adresse Email",
+      "password": "Mot de Passe",
+      "confirmPassword": "Confirmer le Mot de Passe",
+      "submit": "Créer un Compte",
+      "hasAccount": "Vous avez déjà un compte?",
+      "login": "Connectez-vous ici"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de Bord Trading",
+    "loading": "Chargement du tableau de bord...",
+    "balance": "Solde",
+    "dailyPnL": "P/L Journalier",
+    "totalPnL": "P/L Total",
+    "challenge": "Défi",
+    "status": {
+      "active": "ACTIF",
+      "passed": "RÉUSSI",
+      "failed": "ÉCHOUÉ",
+      "noChallenge": "AUCUN DÉFI"
+    },
+    "noChallenge": {
+      "title": "Aucun Défi Actif",
+      "description": "Achetez un défi pour commencer à trader",
+      "cta": "Voir les Tarifs"
+    },
+    "trade": {
+      "title": "Exécution de Trade",
+      "subtitle": "Exécuter des ordres au marché",
+      "symbol": "Symbole",
+      "quantity": "Quantité",
+      "price": "Prix",
+      "orderType": "Type d'Ordre",
+      "market": "Marché",
+      "limit": "Limite",
+      "buy": "Acheter",
+      "sell": "Vendre",
+      "currentPrice": "Prix Actuel",
+      "totalValue": "Valeur Totale",
+      "availableBalance": "Solde Disponible",
+      "insufficientBalance": "Solde insuffisant pour ce trade"
+    },
+    "positions": {
+      "title": "Positions Ouvertes",
+      "noPositions": "Aucune position ouverte",
+      "symbol": "Symbole",
+      "quantity": "Qté",
+      "avgPrice": "Prix Moy",
+      "currentPrice": "Actuel",
+      "pnl": "P/L",
+      "actions": "Actions"
+    },
+    "trades": {
+      "title": "Trades Récents",
+      "noTrades": "Aucun trade",
+      "symbol": "Symbole",
+      "type": "Type",
+      "quantity": "Quantité",
+      "price": "Prix",
+      "date": "Date"
+    },
+    "aiSignals": {
+      "title": "Signaux IA",
+      "buy": "ACHAT",
+      "sell": "VENTE",
+      "hold": "CONSERVER",
+      "confidence": "Confiance"
+    },
+    "assets": {
+      "title": "Actifs Négociables",
+      "search": "Rechercher des actifs...",
+      "all": "Tous",
+      "crypto": "Crypto",
+      "stocks": "Actions"
+    },
+    "chart": {
+      "title": "Graphique des Prix",
+      "loading": "Chargement du graphique..."
+    },
+    "refreshAll": "Actualiser toutes les données"
+  },
+  "leaderboard": {
+    "title": "Classement Mensuel",
+    "topPerformers": "Meilleurs Performers",
+    "description": "Les meilleurs traders du mois",
+    "rank": "Rang",
+    "trader": "Trader",
+    "plan": "Plan",
+    "return": "Rendement",
+    "trades": "Trades",
+    "winRate": "Taux de Gain",
+    "status": "Statut",
+    "noTraders": "Aucun trader au classement pour le moment",
+    "autoRefresh": "Actualisation automatique toutes les 60 secondes"
+  },
+  "admin": {
+    "title": "Panneau d'Administration",
+    "description": "Gérer les utilisateurs, défis et statistiques",
+    "stats": {
+      "totalUsers": "Utilisateurs Totaux",
+      "activeChallenges": "Défis Actifs",
+      "passRate": "Taux de Réussite",
+      "totalRevenue": "Revenu Total"
+    },
+    "challenges": {
+      "title": "Défis",
+      "overview": "Aperçu des Défis",
+      "total": "Total",
+      "active": "Actifs",
+      "passed": "Réussis",
+      "failed": "Échoués"
+    },
+    "table": {
+      "id": "ID",
+      "user": "Utilisateur",
+      "plan": "Plan",
+      "status": "Statut",
+      "balance": "Solde",
+      "pnl": "P/L",
+      "created": "Créé",
+      "actions": "Actions"
+    },
+    "actions": {
+      "pass": "Valider",
+      "fail": "Échouer",
+      "reactivate": "Réactiver"
+    },
+    "filters": {
+      "search": "Recherche",
+      "searchPlaceholder": "Rechercher par nom ou email...",
+      "status": "Statut",
+      "allStatuses": "Tous les Statuts",
+      "plan": "Plan",
+      "allPlans": "Tous les Plans"
+    }
+  },
+  "payment": {
+    "title": "Finaliser le Paiement",
+    "methods": {
+      "card": "Carte",
+      "crypto": "Crypto",
+      "paypal": "PayPal"
+    },
+    "card": {
+      "number": "Numéro de Carte",
+      "expiry": "Expiration",
+      "cvv": "CVV",
+      "secure": "Sécurisé par CMI Maroc"
+    },
+    "crypto": {
+      "sendTo": "Envoyer le paiement à:",
+      "walletAddress": "Votre Adresse Wallet (pour remboursement)",
+      "note": "Paiement vérifié sous 10 minutes"
+    },
+    "paypal": {
+      "email": "Email PayPal",
+      "protection": "Protection Acheteur PayPal"
+    },
+    "processing": "Traitement du Paiement...",
+    "pay": "Payer"
+  },
+  "language": {
+    "select": "Langue",
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  }
+}
