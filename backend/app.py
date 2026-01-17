@@ -10,25 +10,10 @@ def create_app(config_class=Config):
     # Initialize extensions
     db.init_app(app)
     
-    # Configure CORS - allow both development and production origins
+    # Configure CORS - allow all origins for API routes in production
+    # This is necessary because Vercel generates dynamic preview URLs
     CORS(app, 
          resources={r"/api/*": {"origins": "*"}},
-         origins=[
-             # Development
-             "http://localhost:5173", 
-             "http://localhost:3000", 
-             "http://localhost:3001", 
-             "http://127.0.0.1:5173", 
-             "http://127.0.0.1:3000", 
-             "http://127.0.0.1:3001",
-             # Production (Vercel)
-             "https://tradeapp.vercel.app",
-             "https://tradesense.vercel.app",
-             "https://tradesenseai.vercel.app",
-             "https://*.vercel.app",
-             # Production (Render)
-             "https://tradesenseai.onrender.com",
-         ],
          methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
          allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
          supports_credentials=True,
