@@ -1,12 +1,27 @@
 import axios from 'axios';
 
-// API Base URL - uses environment variable in production, localhost in development
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// API Base URL configuration
+// In production: use environment variable or detect from hostname
+// In development: fallback to localhost
+const getApiBaseUrl = () => {
+  // First check for environment variable
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In production (non-localhost), use the Render backend
+  if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+    return 'https://tradesenseai.onrender.com/api';
+  }
+  
+  // Default to localhost for development
+  return 'http://localhost:5000/api';
+};
 
-// Debug: Log API URL in development
-if (import.meta.env.DEV) {
-  console.log('API Base URL:', API_BASE_URL);
-}
+const API_BASE_URL = getApiBaseUrl();
+
+// Debug: Log API URL
+console.log('API Base URL:', API_BASE_URL);
 
 // Create axios instance with default config
 const api = axios.create({
