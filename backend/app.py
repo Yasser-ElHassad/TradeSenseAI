@@ -12,6 +12,7 @@ def create_app(config_class=Config):
     
     # Configure CORS - allow both development and production origins
     CORS(app, 
+         resources={r"/api/*": {"origins": "*"}},
          origins=[
              # Development
              "http://localhost:5173", 
@@ -23,12 +24,15 @@ def create_app(config_class=Config):
              # Production (Vercel)
              "https://tradeapp.vercel.app",
              "https://tradesense.vercel.app",
+             "https://tradesenseai.vercel.app",
              "https://*.vercel.app",
-             # Add your actual Vercel domain here
+             # Production (Render)
+             "https://tradesenseai.onrender.com",
          ],
          methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
          allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
-         supports_credentials=True
+         supports_credentials=True,
+         expose_headers=["Content-Type", "Authorization"]
     )
     
     # Register blueprints
