@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import api from '../services/api'
 
 const MarketData = () => {
   const [symbol, setSymbol] = useState('')
@@ -16,7 +16,7 @@ const MarketData = () => {
     setMarketData(null)
 
     try {
-      const response = await axios.get(`/api/market-data/${symbol.toUpperCase()}`)
+      const response = await api.get(`/market-data/${symbol.toUpperCase()}`)
       setMarketData(response.data)
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch market data')

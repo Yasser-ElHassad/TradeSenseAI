@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import api from '../services/api'
 
 const TradeForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -17,7 +17,7 @@ const TradeForm = ({ onSubmit }) => {
     setMessage(null)
 
     try {
-      await axios.post('/api/trades', formData)
+      await api.post('/trades', formData)
       setMessage({ type: 'success', text: 'Trade executed successfully!' })
       setFormData({ symbol: '', quantity: '', price: '', trade_type: 'buy' })
       if (onSubmit) onSubmit()
