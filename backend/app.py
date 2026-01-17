@@ -147,9 +147,13 @@ def create_app(config_class=Config):
     # Import models to register them with SQLAlchemy
     from models import User, Challenge, Trade, Payment, Portfolio
     
-    # Initialize database
+    # Initialize database tables (deferred to first request in production)
     with app.app_context():
-        init_db(app)
+        try:
+            db.create_all()
+            print("Database tables created successfully")
+        except Exception as e:
+            print(f"Warning: Could not create database tables: {str(e)}")
     
     return app
 
@@ -168,6 +172,14 @@ def init_db(app):
             raise
 
 
-if __name__ == '__main__':
+# Create app instance for gunicorn
+# This must be at module level for gunicorn to find it
+try:
     app = create_app()
+except Exception as e:
+    import sys
+    print(f"Failed to create app: {e}", file=sys.stderr)
+    raise
+
+if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
