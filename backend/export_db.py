@@ -1,24 +1,23 @@
 """
 Database Export Script
-Exports SQLite database structure and sample data to PostgreSQL-compatible SQL file
+Exports SQLite database structure and data to PostgreSQL-compatible SQL file
 """
 
 import sqlite3
 import os
 from datetime import datetime
-from werkzeug.security import generate_password_hash
 
 def export_database():
     """Export SQLite database to PostgreSQL-compatible SQL dump"""
     
     # Database file path
     db_path = os.path.join('instance', 'tradesense.db')
-    output_file = 'database.sql'
+    output_file = os.path.join('..', 'database.sql')
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found at {db_path}")
-        print("Creating sample database with test data...")
-        create_sample_database(db_path)
+        print("Run seed_data.py first to create the database with sample data.")
+        return
     
     # Connect to SQLite database
     conn = sqlite3.connect(db_path)
@@ -28,12 +27,14 @@ def export_database():
         # Write header
         f.write("-- TradeSense Database SQL Dump\n")
         f.write(f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write("-- Compatible with PostgreSQL\n\n")
+        f.write("-- Compatible with PostgreSQL\n")
+        f.write("-- Development: SQLite | Production: PostgreSQL\n\n")
         
-        # Drop existing tables
-        f.write("-- Drop existing tables\n")
+        # Drop existing tables (order matters due to foreign key constraints)
+        f.write("-- Drop existing tables (order matters due to foreign key constraints)\n")
+        f.write("DROP TABLE IF EXISTS payments CASCADE;\n")
         f.write("DROP TABLE IF EXISTS trades CASCADE;\n")
-        f.write("DROP TABLE IF EXISTS positions CASCADE;\n")
+        f.write("DROP TABLE IF EXISTS portfolio CASCADE;\n")
         f.write("DROP TABLE IF EXISTS challenges CASCADE;\n")
         f.write("DROP TABLE IF EXISTS users CASCADE;\n\n")
         
@@ -43,9 +44,10 @@ def export_database():
     id SERIAL PRIMARY KEY,
     username VARCHAR(80) UNIQUE NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
-    password_hash VARCHAR(256) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_admin BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_superadmin BOOLEAN DEFAULT FALSE
 );\n\n""")
         
         # Create Challenges table
@@ -53,30 +55,16 @@ def export_database():
         f.write("""CREATE TABLE challenges (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    plan_name VARCHAR(50) NOT NULL,
+    plan_type VARCHAR(50) NOT NULL,
     starting_balance FLOAT NOT NULL,
     current_balance FLOAT NOT NULL,
-    profit_target FLOAT NOT NULL,
-    daily_loss_limit FLOAT NOT NULL,
-    max_total_loss FLOAT NOT NULL,
     status VARCHAR(20) DEFAULT 'active',
+    max_daily_loss_percent FLOAT DEFAULT 5.0,
+    max_total_loss_percent FLOAT DEFAULT 10.0,
+    profit_target_percent FLOAT DEFAULT 10.0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    passed_at TIMESTAMP,
-    failed_at TIMESTAMP
-);\n\n""")
-        
-        # Create Positions table
-        f.write("-- Create Positions table\n")
-        f.write("""CREATE TABLE positions (
-    id SERIAL PRIMARY KEY,
-    challenge_id INTEGER NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    symbol VARCHAR(10) NOT NULL,
-    quantity INTEGER NOT NULL,
-    average_price FLOAT NOT NULL,
-    current_price FLOAT,
-    unrealized_pnl FLOAT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ended_at TIMESTAMP,
+    failure_reason VARCHAR(100)
 );\n\n""")
         
         # Create Trades table
@@ -84,234 +72,140 @@ def export_database():
         f.write("""CREATE TABLE trades (
     id SERIAL PRIMARY KEY,
     challenge_id INTEGER NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    symbol VARCHAR(10) NOT NULL,
-    trade_type VARCHAR(10) NOT NULL,
-    quantity INTEGER NOT NULL,
+    symbol VARCHAR(20) NOT NULL,
+    action VARCHAR(10) NOT NULL,
+    quantity FLOAT NOT NULL,
     price FLOAT NOT NULL,
     total_value FLOAT NOT NULL,
+    balance_after_trade FLOAT NOT NULL,
+    profit_loss FLOAT DEFAULT 0.0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );\n\n""")
         
-        # Get actual data from SQLite
-        tables = ['users', 'challenges', 'positions', 'trades']
+        # Create Payments table
+        f.write("-- Create Payments table\n")
+        f.write("""CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    challenge_id INTEGER REFERENCES challenges(id) ON DELETE SET NULL,
+    amount FLOAT NOT NULL,
+    currency VARCHAR(10) DEFAULT 'DH',
+    payment_method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    transaction_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);\n\n""")
         
-        for table in tables:
+        # Create Portfolio table (legacy)
+        f.write("-- Create Portfolio table (legacy, for backward compatibility)\n")
+        f.write("""CREATE TABLE portfolio (
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(20) UNIQUE NOT NULL,
+    quantity FLOAT DEFAULT 0.0,
+    avg_price FLOAT DEFAULT 0.0,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);\n\n""")
+        
+        # Export data from each table
+        tables_config = [
+            ('users', ['id', 'username', 'email', 'password_hash', 'created_at', 'is_admin', 'is_superadmin']),
+            ('challenges', ['id', 'user_id', 'plan_type', 'starting_balance', 'current_balance', 'status', 
+                           'max_daily_loss_percent', 'max_total_loss_percent', 'profit_target_percent', 
+                           'created_at', 'ended_at', 'failure_reason']),
+            ('trades', ['id', 'challenge_id', 'symbol', 'action', 'quantity', 'price', 'total_value', 
+                       'balance_after_trade', 'profit_loss', 'created_at']),
+            ('payments', ['id', 'user_id', 'challenge_id', 'amount', 'currency', 'payment_method', 
+                         'status', 'transaction_id', 'created_at']),
+            ('portfolio', ['id', 'symbol', 'quantity', 'avg_price', 'last_updated'])
+        ]
+        
+        for table_name, expected_columns in tables_config:
             try:
-                cursor.execute(f"SELECT * FROM {table}")
+                # Get actual columns from the table
+                cursor.execute(f"PRAGMA table_info({table_name})")
+                actual_columns = [col[1] for col in cursor.fetchall()]
+                
+                # Use only columns that exist in both expected and actual
+                columns = [col for col in expected_columns if col in actual_columns]
+                
+                if not columns:
+                    continue
+                
+                cursor.execute(f"SELECT {', '.join(columns)} FROM {table_name}")
                 rows = cursor.fetchall()
                 
                 if rows:
-                    # Get column names
-                    cursor.execute(f"PRAGMA table_info({table})")
-                    columns = [col[1] for col in cursor.fetchall()]
-                    
-                    f.write(f"-- Insert data into {table}\n")
+                    f.write(f"-- Insert data into {table_name}\n")
                     
                     for row in rows:
-                        # Format values for PostgreSQL
                         formatted_values = []
-                        for val in row:
+                        for i, val in enumerate(row):
                             if val is None:
                                 formatted_values.append('NULL')
                             elif isinstance(val, str):
-                                # Escape single quotes
                                 escaped = val.replace("'", "''")
                                 formatted_values.append(f"'{escaped}'")
-                            elif isinstance(val, bool):
+                            elif isinstance(val, bool) or (columns[i] in ['is_admin', 'is_superadmin'] and isinstance(val, int)):
                                 formatted_values.append('TRUE' if val else 'FALSE')
                             else:
                                 formatted_values.append(str(val))
                         
                         values_str = ', '.join(formatted_values)
-                        f.write(f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({values_str});\n")
+                        f.write(f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({values_str});\n")
                     
                     f.write('\n')
-            except sqlite3.OperationalError:
-                # Table doesn't exist, skip
-                pass
+            except sqlite3.OperationalError as e:
+                print(f"⚠️  Skipping table {table_name}: {e}")
         
-        # Add sample data if database is empty
-        cursor.execute("SELECT COUNT(*) FROM users")
-        if cursor.fetchone()[0] == 0:
-            f.write("-- Sample data (if database is empty)\n\n")
-            
-            # Sample users
-            f.write("-- Sample users (password: 'password123' for all)\n")
-            password_hash = generate_password_hash('password123')
-            f.write(f"""INSERT INTO users (username, email, password_hash, is_admin) VALUES
-('john_trader', 'john@example.com', '{password_hash}', FALSE),
-('sarah_pro', 'sarah@example.com', '{password_hash}', FALSE),
-('admin_user', 'admin@tradesense.ai', '{password_hash}', TRUE);\n\n""")
-            
-            # Sample challenges
-            f.write("-- Sample challenges\n")
-            f.write("""INSERT INTO challenges (user_id, plan_name, starting_balance, current_balance, profit_target, daily_loss_limit, max_total_loss, status) VALUES
-(1, 'Pro', 10000, 10450, 1000, 500, 1000, 'active'),
-(2, 'Starter', 5000, 5250, 500, 250, 500, 'active'),
-(1, 'Elite', 25000, 26500, 2500, 1250, 2500, 'active');\n\n""")
-            
-            # Sample trades
-            f.write("-- Sample trades\n")
-            f.write("""INSERT INTO trades (challenge_id, symbol, trade_type, quantity, price, total_value) VALUES
-(1, 'AAPL', 'buy', 10, 150.00, 1500.00),
-(1, 'AAPL', 'sell', 10, 155.00, 1550.00),
-(2, 'GOOGL', 'buy', 5, 140.00, 700.00),
-(2, 'GOOGL', 'sell', 5, 145.00, 725.00),
-(3, 'MSFT', 'buy', 20, 370.00, 7400.00),
-(3, 'TSLA', 'buy', 15, 245.00, 3675.00);\n\n""")
-            
-            # Sample positions
-            f.write("-- Sample positions (current open positions)\n")
-            f.write("""INSERT INTO positions (challenge_id, symbol, quantity, average_price, current_price, unrealized_pnl) VALUES
-(3, 'MSFT', 20, 370.00, 375.00, 100.00),
-(3, 'TSLA', 15, 245.00, 250.00, 75.00);\n\n""")
+        # Reset sequences for auto-increment columns
+        f.write("-- Reset sequences for auto-increment columns (PostgreSQL)\n")
+        f.write("SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 1));\n")
+        f.write("SELECT setval('challenges_id_seq', COALESCE((SELECT MAX(id) FROM challenges), 1));\n")
+        f.write("SELECT setval('trades_id_seq', COALESCE((SELECT MAX(id) FROM trades), 1));\n")
+        f.write("SELECT setval('payments_id_seq', COALESCE((SELECT MAX(id) FROM payments), 1));\n")
+        f.write("SELECT setval('portfolio_id_seq', COALESCE((SELECT MAX(id) FROM portfolio), 1));\n\n")
         
-        # Add sequences reset
-        f.write("-- Reset sequences for auto-increment columns\n")
-        f.write("SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));\n")
-        f.write("SELECT setval('challenges_id_seq', (SELECT MAX(id) FROM challenges));\n")
-        f.write("SELECT setval('positions_id_seq', (SELECT MAX(id) FROM positions));\n")
-        f.write("SELECT setval('trades_id_seq', (SELECT MAX(id) FROM trades));\n\n")
-        
-        # Add indexes
+        # Create indexes
         f.write("-- Create indexes for performance\n")
-        f.write("CREATE INDEX idx_challenges_user_id ON challenges(user_id);\n")
-        f.write("CREATE INDEX idx_challenges_status ON challenges(status);\n")
-        f.write("CREATE INDEX idx_trades_challenge_id ON trades(challenge_id);\n")
-        f.write("CREATE INDEX idx_trades_symbol ON trades(symbol);\n")
-        f.write("CREATE INDEX idx_positions_challenge_id ON positions(challenge_id);\n")
-        f.write("CREATE INDEX idx_positions_symbol ON positions(symbol);\n\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_challenges_user_id ON challenges(user_id);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_trades_challenge_id ON trades(challenge_id);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_trades_symbol ON trades(symbol);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_trades_created_at ON trades(created_at);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);\n")
+        f.write("CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);\n\n")
         
         f.write("-- Database export completed successfully\n")
     
     conn.close()
     
-    print(f"✅ Database exported successfully to {output_file}")
-    print(f"\n📋 Import instructions:")
-    print(f"   1. On Render/Railway, connect to PostgreSQL:")
-    print(f"      psql $DATABASE_URL")
-    print(f"   2. Run the SQL file:")
-    print(f"      \\i database.sql")
-    print(f"   OR use command line:")
-    print(f"      psql $DATABASE_URL < database.sql")
-    print(f"\n🔐 Sample user credentials:")
-    print(f"   Username: john_trader")
-    print(f"   Username: sarah_pro")
-    print(f"   Username: admin_user (admin)")
-    print(f"   Password: password123 (for all)")
-
-
-def create_sample_database(db_path):
-    """Create a sample SQLite database with test data"""
-    
-    # Ensure instance directory exists
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
-    
+    # Count exported data
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
-    # Create tables
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username VARCHAR(80) UNIQUE NOT NULL,
-            email VARCHAR(120) UNIQUE NOT NULL,
-            password_hash VARCHAR(256) NOT NULL,
-            is_admin BOOLEAN DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+    counts = {}
+    for table in ['users', 'challenges', 'trades', 'payments', 'portfolio']:
+        try:
+            cursor.execute(f"SELECT COUNT(*) FROM {table}")
+            counts[table] = cursor.fetchone()[0]
+        except:
+            counts[table] = 0
     
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS challenges (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            plan_name VARCHAR(50) NOT NULL,
-            starting_balance REAL NOT NULL,
-            current_balance REAL NOT NULL,
-            profit_target REAL NOT NULL,
-            daily_loss_limit REAL NOT NULL,
-            max_total_loss REAL NOT NULL,
-            status VARCHAR(20) DEFAULT 'active',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            passed_at TIMESTAMP,
-            failed_at TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
-    
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS positions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            challenge_id INTEGER NOT NULL,
-            symbol VARCHAR(10) NOT NULL,
-            quantity INTEGER NOT NULL,
-            average_price REAL NOT NULL,
-            current_price REAL,
-            unrealized_pnl REAL DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (challenge_id) REFERENCES challenges(id)
-        )
-    """)
-    
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS trades (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            challenge_id INTEGER NOT NULL,
-            symbol VARCHAR(10) NOT NULL,
-            trade_type VARCHAR(10) NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL,
-            total_value REAL NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (challenge_id) REFERENCES challenges(id)
-        )
-    """)
-    
-    # Insert sample data
-    password_hash = generate_password_hash('password123')
-    
-    cursor.execute("""
-        INSERT INTO users (username, email, password_hash, is_admin)
-        VALUES 
-        ('john_trader', 'john@example.com', ?, 0),
-        ('sarah_pro', 'sarah@example.com', ?, 0),
-        ('admin_user', 'admin@tradesense.ai', ?, 1)
-    """, (password_hash, password_hash, password_hash))
-    
-    cursor.execute("""
-        INSERT INTO challenges (user_id, plan_name, starting_balance, current_balance, profit_target, daily_loss_limit, max_total_loss, status)
-        VALUES 
-        (1, 'Pro', 10000, 10450, 1000, 500, 1000, 'active'),
-        (2, 'Starter', 5000, 5250, 500, 250, 500, 'active'),
-        (1, 'Elite', 25000, 26500, 2500, 1250, 2500, 'active')
-    """)
-    
-    cursor.execute("""
-        INSERT INTO trades (challenge_id, symbol, trade_type, quantity, price, total_value)
-        VALUES 
-        (1, 'AAPL', 'buy', 10, 150.00, 1500.00),
-        (1, 'AAPL', 'sell', 10, 155.00, 1550.00),
-        (2, 'GOOGL', 'buy', 5, 140.00, 700.00),
-        (2, 'GOOGL', 'sell', 5, 145.00, 725.00),
-        (3, 'MSFT', 'buy', 20, 370.00, 7400.00),
-        (3, 'TSLA', 'buy', 15, 245.00, 3675.00)
-    """)
-    
-    cursor.execute("""
-        INSERT INTO positions (challenge_id, symbol, quantity, average_price, current_price, unrealized_pnl)
-        VALUES 
-        (3, 'MSFT', 20, 370.00, 375.00, 100.00),
-        (3, 'TSLA', 15, 245.00, 250.00, 75.00)
-    """)
-    
-    conn.commit()
     conn.close()
     
-    print(f"✅ Sample database created at {db_path}")
+    print(f"✅ Database exported successfully to {output_file}")
+    print(f"\n📊 Exported data summary:")
+    print(f"   Users:      {counts['users']}")
+    print(f"   Challenges: {counts['challenges']}")
+    print(f"   Trades:     {counts['trades']}")
+    print(f"   Payments:   {counts['payments']}")
+    print(f"   Portfolio:  {counts['portfolio']}")
+    print(f"\n📋 To import into PostgreSQL:")
+    print(f"   psql $DATABASE_URL < database.sql")
 
 
 if __name__ == '__main__':
-    print("🔄 Exporting database...\n")
+    print("🔄 Exporting database to PostgreSQL-compatible SQL...\n")
     export_database()
