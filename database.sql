@@ -2,9 +2,11 @@
 -- Generated: 2026-01-17 15:40:55
 -- Compatible with PostgreSQL
 
--- Drop existing tables
+-- Drop existing tables (order matters due to foreign key constraints)
+DROP TABLE IF EXISTS payments CASCADE;
 DROP TABLE IF EXISTS trades CASCADE;
 DROP TABLE IF EXISTS positions CASCADE;
+DROP TABLE IF EXISTS portfolio CASCADE;
 DROP TABLE IF EXISTS challenges CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
@@ -15,6 +17,7 @@ CREATE TABLE users (
     email VARCHAR(120) UNIQUE NOT NULL,
     password_hash VARCHAR(256) NOT NULL,
     is_admin BOOLEAN DEFAULT FALSE,
+    is_superadmin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,24 +25,23 @@ CREATE TABLE users (
 CREATE TABLE challenges (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    plan_name VARCHAR(50) NOT NULL,
+    plan_type VARCHAR(50) NOT NULL,
     starting_balance FLOAT NOT NULL,
     current_balance FLOAT NOT NULL,
-    profit_target FLOAT NOT NULL,
-    daily_loss_limit FLOAT NOT NULL,
-    max_total_loss FLOAT NOT NULL,
+    max_daily_loss_percent FLOAT DEFAULT 5.0,
+    max_total_loss_percent FLOAT DEFAULT 10.0,
+    profit_target_percent FLOAT DEFAULT 10.0,
     status VARCHAR(20) DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    passed_at TIMESTAMP,
-    failed_at TIMESTAMP
+    ended_at TIMESTAMP
 );
 
 -- Create Positions table
 CREATE TABLE positions (
     id SERIAL PRIMARY KEY,
     challenge_id INTEGER NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    symbol VARCHAR(10) NOT NULL,
-    quantity INTEGER NOT NULL,
+    symbol VARCHAR(20) NOT NULL,
+    quantity FLOAT NOT NULL,
     average_price FLOAT NOT NULL,
     current_price FLOAT,
     unrealized_pnl FLOAT DEFAULT 0,
@@ -51,12 +53,34 @@ CREATE TABLE positions (
 CREATE TABLE trades (
     id SERIAL PRIMARY KEY,
     challenge_id INTEGER NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-    symbol VARCHAR(10) NOT NULL,
-    trade_type VARCHAR(10) NOT NULL,
-    quantity INTEGER NOT NULL,
+    symbol VARCHAR(20) NOT NULL,
+    action VARCHAR(10) NOT NULL,
+    quantity FLOAT NOT NULL,
     price FLOAT NOT NULL,
     total_value FLOAT NOT NULL,
+    balance_after_trade FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Payments table
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    challenge_id INTEGER REFERENCES challenges(id) ON DELETE SET NULL,
+    amount FLOAT NOT NULL,
+    currency VARCHAR(10) DEFAULT 'USD',
+    payment_method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Portfolio table (legacy, for backward compatibility)
+CREATE TABLE portfolio (
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(20) UNIQUE NOT NULL,
+    quantity FLOAT DEFAULT 0.0,
+    avg_price FLOAT DEFAULT 0.0,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert data into users
@@ -80,17 +104,24 @@ INSERT INTO trades (id, challenge_id, symbol, action, quantity, price, total_val
 INSERT INTO trades (id, challenge_id, symbol, action, quantity, price, total_value, balance_after_trade, created_at) VALUES (5, 4, 'ETH-USD', 'buy', 2.0, 3307.17, 6614.34, 3385.66, '2026-01-17 14:37:56.727558');
 
 -- Reset sequences for auto-increment columns
-SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
-SELECT setval('challenges_id_seq', (SELECT MAX(id) FROM challenges));
-SELECT setval('positions_id_seq', (SELECT MAX(id) FROM positions));
-SELECT setval('trades_id_seq', (SELECT MAX(id) FROM trades));
+SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 1));
+SELECT setval('challenges_id_seq', COALESCE((SELECT MAX(id) FROM challenges), 1));
+SELECT setval('positions_id_seq', COALESCE((SELECT MAX(id) FROM positions), 1));
+SELECT setval('trades_id_seq', COALESCE((SELECT MAX(id) FROM trades), 1));
+SELECT setval('payments_id_seq', COALESCE((SELECT MAX(id) FROM payments), 1));
+SELECT setval('portfolio_id_seq', COALESCE((SELECT MAX(id) FROM portfolio), 1));
 
 -- Create indexes for performance
-CREATE INDEX idx_challenges_user_id ON challenges(user_id);
-CREATE INDEX idx_challenges_status ON challenges(status);
-CREATE INDEX idx_trades_challenge_id ON trades(challenge_id);
-CREATE INDEX idx_trades_symbol ON trades(symbol);
-CREATE INDEX idx_positions_challenge_id ON positions(challenge_id);
-CREATE INDEX idx_positions_symbol ON positions(symbol);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_challenges_user_id ON challenges(user_id);
+CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
+CREATE INDEX IF NOT EXISTS idx_trades_challenge_id ON trades(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_trades_symbol ON trades(symbol);
+CREATE INDEX IF NOT EXISTS idx_trades_created_at ON trades(created_at);
+CREATE INDEX IF NOT EXISTS idx_positions_challenge_id ON positions(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_positions_symbol ON positions(symbol);
+CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 
 -- Database export completed successfully

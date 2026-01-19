@@ -44,6 +44,7 @@ class Challenge(db.Model):
     profit_target_percent = db.Column(db.Float, default=10.0, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     ended_at = db.Column(db.DateTime, nullable=True)
+    failure_reason = db.Column(db.String(100), nullable=True)  # e.g., 'max_daily_loss', 'max_total_loss'
     
     # Relationships
     trades = db.relationship('Trade', backref='challenge', lazy=True, cascade='all, delete-orphan', order_by='Trade.created_at.desc()')
@@ -62,6 +63,7 @@ class Challenge(db.Model):
             'profit_target_percent': self.profit_target_percent,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'ended_at': self.ended_at.isoformat() if self.ended_at else None,
+            'failure_reason': self.failure_reason,
             'total_pnl': self.current_balance - self.starting_balance,
             'total_pnl_percent': ((self.current_balance - self.starting_balance) / self.starting_balance * 100) if self.starting_balance > 0 else 0
         }
@@ -81,6 +83,7 @@ class Trade(db.Model):
     price = db.Column(db.Float, nullable=False)
     total_value = db.Column(db.Float, nullable=False)
     balance_after_trade = db.Column(db.Float, nullable=False)
+    profit_loss = db.Column(db.Float, default=0.0)  # P&L for this trade
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     
     def to_dict(self):
@@ -93,6 +96,7 @@ class Trade(db.Model):
             'price': self.price,
             'total_value': self.total_value,
             'balance_after_trade': self.balance_after_trade,
+            'profit_loss': self.profit_loss,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
     
@@ -107,9 +111,10 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'), nullable=True, index=True)
     amount = db.Column(db.Float, nullable=False)
-    currency = db.Column(db.String(10), default='USD', nullable=False)
-    payment_method = db.Column(db.String(50), nullable=False)  # e.g., 'credit_card', 'paypal', 'stripe'
+    currency = db.Column(db.String(10), default='DH', nullable=False)
+    payment_method = db.Column(db.String(50), nullable=False)  # e.g., 'CMI', 'PayPal', 'Crypto'
     status = db.Column(db.String(20), default='pending', nullable=False)  # 'pending', 'completed', 'failed'
+    transaction_id = db.Column(db.String(100), nullable=True)  # External transaction reference
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     
     def to_dict(self):
@@ -121,6 +126,7 @@ class Payment(db.Model):
             'currency': self.currency,
             'payment_method': self.payment_method,
             'status': self.status,
+            'transaction_id': self.transaction_id,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
     
