@@ -5,7 +5,10 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Database URL - fix for PostgreSQL (Render uses postgresql:// prefix)
-    database_url = os.environ.get('DATABASE_URL') or 'sqlite:///tradesense.db'
+    # Use instance folder for SQLite in development
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    default_db = 'sqlite:///' + os.path.join(basedir, 'instance', 'tradesense.db')
+    database_url = os.environ.get('DATABASE_URL') or default_db
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
     SQLALCHEMY_DATABASE_URI = database_url
